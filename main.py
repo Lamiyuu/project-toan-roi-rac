@@ -152,7 +152,7 @@ def main() -> None:
     pygame.draw.rect(screen, color1, rect1)
 
     # Hiển thị bên phải hình chữ nhật màu cam:
-    rect2 = pygame.Rect(600, 50, 300, RIGHT_PAD)
+    rect2 = pygame.Rect(600, 50, RIGHT_PAD, 900)
     pygame.draw.rect(screen, color2, rect2)
 
     # create dropmenu select algorithm
