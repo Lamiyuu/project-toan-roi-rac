@@ -1,23 +1,28 @@
+from typing import Optional
+
 import pygame
 import sys
 import heapq
 import time
 from math import sqrt
 
+
 # ALGORITHM: A* (A star) -----
 # Define A* heuristic function
 def heuristic(a, b) -> float:
     return sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
 
+
 # Define A* path finding function
-def astar(grid, start, goal, grid_info, screen, finding_color) -> (list | None):
+def astar(grid, start, goal, grid_info, screen, finding_color) -> Optional[list]:
     # Get grid information
     grid_width = grid_info[0]
     grid_height = grid_info[1]
     grid_size = grid_info[2]
-    
+
     # Implementation of A* algorithm here
-    neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0),(1, 1), (-1, -1), (1, -1), (-1, 1)]  # Các vị trí có thể di chuyển lên xuống trái phải
+    neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1),
+                 (-1, 1)]  # Các vị trí có thể di chuyển lên xuống trái phải
 
     close_set = set()  # Danh sách đóng không cần xét lại
     came_from = {}  # Từ điển chứa tất cả các tuyến đường đã xét rồi tìm chỗ ngắn nhất
@@ -45,13 +50,13 @@ def astar(grid, start, goal, grid_info, screen, finding_color) -> (list | None):
         for i, j in neighbors:  # Xét tất cả hàng xóm và tính G
             neighbor = current[0] + i, current[1] + j
             tentative_g_score = gscore[current] + heuristic(current, neighbor)
-            if 0 <= neighbor[0] < grid_width:       #Bỏ qua các vị trí nằm ngoài lưới đc đi
-                if 0 <= neighbor[1] < grid_height:                
+            if 0 <= neighbor[0] < grid_width:  # Bỏ qua các vị trí nằm ngoài lưới đc đi
+                if 0 <= neighbor[1] < grid_height:
                     if grid[neighbor[1]][neighbor[0]] == 1:
                         continue
-                else: 
+                else:
                     # Tường y
-                    continue    
+                    continue
             else:
                 # Tường x
                 continue
@@ -65,7 +70,8 @@ def astar(grid, start, goal, grid_info, screen, finding_color) -> (list | None):
                 fscore[neighbor] = tentative_g_score + heuristic(neighbor, goal)
 
                 heapq.heappush(oheap, (fscore[neighbor], neighbor))
-                pygame.draw.rect(screen, finding_color, [current_temp[0] * grid_size, current_temp[1] * grid_size, grid_size, grid_size])
+                pygame.draw.rect(screen, finding_color,
+                                 [current_temp[0] * grid_size, current_temp[1] * grid_size, grid_size, grid_size])
                 pygame.display.update()
-                time.sleep(0.02)    
+                time.sleep(0.02)
     return None

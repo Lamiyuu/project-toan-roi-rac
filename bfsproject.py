@@ -1,8 +1,10 @@
+from typing import Optional
+
 import pygame
 import sys
 from collections import deque
 import time
-def bfs(grid, start, goal, grid_info, screen, finding_color) -> (list | None):
+def bfs(grid, start, goal, grid_info, screen, finding_color) -> Optional[list]:
     # Get grid information
     grid_width = grid_info[0]
     grid_height = grid_info[1]
