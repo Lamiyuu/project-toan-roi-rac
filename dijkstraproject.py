@@ -1,35 +1,23 @@
-from typing import Optional
-
 import pygame
 import sys
 import heapq
 import time
 from math import sqrt
 
-# ALGORITHM: A* (A star) -----
-# Define A* heuristic function
-def heuristic(a, b) -> float:
-    return sqrt((b[0] - a[0]) ** 2 + (b[1] - a[1]) ** 2)
-
-
-# Define A* path finding function
-def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
+def dijktra(grid, start, goal, grid_info, screen) -> (list | None):
     # Get grid information
     grid_width = grid_info[0]
     grid_height = grid_info[1]
     grid_size = grid_info[2]
 
-    # Implementation of A* algorithm here
-    neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1),
-                 (-1, 1)]  # Các vị trí có thể di chuyển lên xuống trái phải
-
+    # Implementation of Dijkstra algorithm here
+    neighbors = [(0, 1), (0, -1), (1, 0), (-1, 0), (1, 1), (-1, -1), (1, -1), (-1, 1)]
     close_set = set()  # Danh sách đóng không cần xét lại
     came_from = {}  # Từ điển chứa tất cả các tuyến đường đã xét rồi tìm chỗ ngắn nhất
     gscore = {start: 0}  # Chi phí di chuyển từ điểm xuất phát đến điểm hiện tại
-    fscore = {start: heuristic(start, goal)}  # f = g + h
 
     oheap = []  # Danh sách mở chứa vị trí đang được xét
-    heapq.heappush(oheap, (fscore[start], start))  # Đưa vị trí xuất phát vào danh sách mở
+    heapq.heappush(oheap, (gscore[start], start))  # Đưa vị trí xuất phát vào danh sách mở
     current_temp = start
 
     while oheap:
@@ -44,18 +32,17 @@ def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
             data.append(start)
             data.reverse()
             return data
-
         close_set.add(current)  # Thêm current vào danh sách đóng
         for i, j in neighbors:  # Xét tất cả hàng xóm và tính G
             neighbor = current[0] + i, current[1] + j
-            tentative_g_score = gscore[current] + heuristic(current, neighbor)
-            if 0 <= neighbor[0] < grid_width:  # Bỏ qua các vị trí nằm ngoài lưới đc đi
-                if 0 <= neighbor[1] < grid_height:
+            tentative_g_score = gscore[current] + 1
+            if 0 <= neighbor[0] < grid_width:       #Bỏ qua các vị trí nằm ngoài lưới đc đi
+                if 0 <= neighbor[1] < grid_height:                
                     if grid[neighbor[1]][neighbor[0]] == 1:
                         continue
-                else:
+                else: 
                     # Tường y
-                    continue
+                    continue    
             else:
                 # Tường x
                 continue
@@ -65,8 +52,5 @@ def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
                 came_from[neighbor] = current
 
                 gscore[neighbor] = tentative_g_score
-
-                fscore[neighbor] = tentative_g_score + heuristic(neighbor, goal)
-
-                heapq.heappush(oheap, (fscore[neighbor], neighbor))
+                heapq.heappush(oheap, (gscore[neighbor], neighbor))   
     return None

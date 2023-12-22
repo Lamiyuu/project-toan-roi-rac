@@ -4,7 +4,8 @@ import pygame
 import sys
 from collections import deque
 import time
-def bfs(grid, start, goal, grid_info, screen, finding_color) -> Optional[list]:
+
+def bfs(grid, start, goal, grid_info, screen) -> Optional[list]:
     # Get grid information
     grid_width = grid_info[0]
     grid_height = grid_info[1]
@@ -19,7 +20,7 @@ def bfs(grid, start, goal, grid_info, screen, finding_color) -> Optional[list]:
     parent = {}
     while queue:
         current = queue.popleft()
-
+        current = current
         if current == goal:
             # Đã tìm được đường đi 
             path = []
@@ -44,7 +45,5 @@ def bfs(grid, start, goal, grid_info, screen, finding_color) -> Optional[list]:
                 queue.append(neighbor)
                 visited.add(neighbor)
                 parent[neighbor] = current
-                pygame.draw.rect(screen, finding_color, [current[0] * grid_size, current[1] * grid_size, grid_size, grid_size])
-                pygame.display.update()
-                time.sleep(0.02) 
+
     return None    

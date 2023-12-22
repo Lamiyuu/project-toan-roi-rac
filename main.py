@@ -4,8 +4,8 @@ import time
 from PIL import Image
 from bfsproject import bfs
 from astarproject import astar
-
-options = ["BFS", "A*"]
+from dijkstraproject import dijktra
+options = ["BFS", "A*", "Dijktra"]
 TOP_PAD = 50
 RIGHT_PAD = 300
 # Map user-friendly names to map identifiers
@@ -158,7 +158,7 @@ def draw_route(screen, route, grid_size, color, find_way) -> None:
         print("Khong tim duoc duong di")
     elif find_way:
         for pos in route:
-            pygame.draw.rect(screen, color, [pos[0] * grid_size, pos[1] * grid_size, grid_size, grid_size])
+            pygame.draw.rect(screen, color, [pos[0] * grid_size, (pos[1] ) * grid_size + TOP_PAD, grid_size, grid_size])
 
 
 # Trả về ảnh 400*400
@@ -273,10 +273,11 @@ def main() -> None:
         if run_algorithm:
             # Chạy thuật toán ở đây
             if main_text == "BFS":
-                route = bfs(grid, start_point, end_point, (30, 30, 20), screen, yellow)
+                route = bfs(grid, start_point , end_point, (30, 30, 20), screen, yellow)
             elif main_text == "A*":
-                route = astar(grid, start_point, end_point, (30, 30, 20), screen, yellow)
-
+                route = astar(grid, start_point , end_point, (30, 30, 20), screen, yellow)
+            elif main_text == "Dijktra":
+                route = dijktra(grid, start_point , end_point, (30, 30, 20), screen, yellow)
             run_algorithm = False  # Đặt lại để tránh chạy liên tục
         if find_way and route:
             draw_route(screen, route, 20, green, find_way)
