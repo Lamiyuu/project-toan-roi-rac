@@ -2,7 +2,6 @@ import pygame, sys
 from pygame.locals import *
 import time
 from PIL import Image
-import pygame_gui
 from bfsproject import bfs
 from astarproject import astar
 
