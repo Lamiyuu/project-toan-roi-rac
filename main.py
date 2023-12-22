@@ -41,24 +41,25 @@ COLOR_LIST_INACTIVE = (255, 100, 100)
 
 COLOR_LIST_ACTIVE = (255, 150, 150)
 
-#Ham khoi tao dropdown 
-def draw_dropdown(surf, rect, color_menu, color_option, font, main, option, draw_menu, active_option):
+
+# Ham khoi tao dropdown
+def draw_dropdown(surf, rect, color_menu, color_option, font, main, option, draw_menu):
     pygame.draw.rect(surf, color_menu[draw_menu], rect, 0)
     msg = font.render(main, 1, (0, 0, 0))
-    surf.blit(msg, msg.get_rect(center = rect.center))
-
+    surf.blit(msg, msg.get_rect(center=rect.center))
     if draw_menu:
         for i, text in enumerate(option):
             option_rect = rect.copy()
-            option_rect.y += (i+1) * rect.height
-            pygame.draw.rect(surf, color_option[1 if i == active_option else 0], option_rect, 0)
+            option_rect.y += (i + 1) * rect.height
+            pygame.draw.rect(surf, color_option[0], option_rect, 0)
             msg = font.render(text, 1, (0, 0, 0))
-            surf.blit(msg, msg.get_rect(center = option_rect.center))
-        
-def update_dropdown(rect, event_list, draw_menu, active_option):
+            surf.blit(msg, msg.get_rect(center=option_rect.center))
+
+
+def update_dropdown(rect, event_list, draw_menu):
     mpos = pygame.mouse.get_pos()
     menu_active = rect.collidepoint(mpos)
-    
+
     active_option = -1
     for i in range(len(options)):
         option_rect = rect.copy()
@@ -66,7 +67,7 @@ def update_dropdown(rect, event_list, draw_menu, active_option):
         if option_rect.collidepoint(mpos):
             active_option = i
             break
-    
+
     if not menu_active and active_option == -1:
         draw_menu = False
 
@@ -183,25 +184,21 @@ def main() -> None:
     screen = pygame.display.set_mode(window_size)
     pygame.display.set_caption("Project toan roi rac nhom 3")
 
-
     # Cho toàn màn hình màu trắng
     screen.fill(white)
 
     # Hiển thị vùng phía trên màu xanh dương hình chữ nhật
     rect1 = pygame.Rect(0, 0, 900, TOP_PAD)
-    pygame.draw.rect(screen, color1, rect1)
+
 
     # Hiển thị bên phải hình chữ nhật màu cam:
     rect2 = pygame.Rect(600, 50, RIGHT_PAD, 900)
-    pygame.draw.rect(screen, color2, rect2)
 
-
-    #Các biến của dropdown:
+    # Các biến của dropdown:
     font = pygame.font.SysFont(None, 20)
     rect = pygame.Rect(650, 100, 150, 50)
     main_text = "Select Algorithm"
     draw_menu = False
-    active_option = -1
 
     # FPS
     FPS = 60
@@ -209,7 +206,6 @@ def main() -> None:
     # Khoảng giới hạn là ô 600x600 từ (0, 50) đến (600, 650)
     limit_rect = pygame.Rect(0, TOP_PAD, 600, 600)
     grid = setup_grid(limit_rect)
-
 
     # Obstacles, start point, end point
     obstacles = []
@@ -224,6 +220,9 @@ def main() -> None:
     run_algorithm = False
     # When running is True, the main loop runs
     while running:
+        screen.fill((255, 255, 255))
+        pygame.draw.rect(screen, color1, rect1)
+        pygame.draw.rect(screen, color2, rect2)
         # Event handling
         event_list = pygame.event.get()
         for event in event_list:
@@ -258,10 +257,9 @@ def main() -> None:
                     done = True
                     find_way = True
                     run_algorithm = True  # Bắt đầu chạy thuật toán khi nhấn phím Enter
-        selected_option, draw_menu = update_dropdown(rect, event_list, draw_menu, active_option)
+        selected_option, draw_menu = update_dropdown(rect, event_list, draw_menu)
         if selected_option >= 0:
             main_text = options[selected_option]
-
 
         draw_grid(screen, window_size, black, 20, limit_rect)
 
@@ -269,7 +267,8 @@ def main() -> None:
 
         draw_end_point(screen, end_point, 20, blue)
 
-        draw_dropdown(screen, rect, [COLOR_INACTIVE, COLOR_ACTIVE], [COLOR_LIST_INACTIVE, COLOR_LIST_ACTIVE], font, main_text, options, draw_menu, active_option)
+        draw_dropdown(screen, rect, [COLOR_INACTIVE, COLOR_ACTIVE], [COLOR_LIST_INACTIVE, COLOR_LIST_ACTIVE], font,
+                      main_text, options, draw_menu)
         if run_algorithm:
             # Chạy thuật toán ở đây
             if main_text == "BFS":
@@ -283,7 +282,6 @@ def main() -> None:
             draw_route(screen, route, 20, green, find_way)
         if obstacles:
             draw_obstacles(screen, obstacles, 20, black)
-
         pygame.display.flip()
 
     pygame.quit()
