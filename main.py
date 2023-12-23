@@ -272,11 +272,11 @@ def main() -> None:
         if run_algorithm:
             # Chạy thuật toán ở đây
             if main_text == "BFS":
-                route = bfs(grid, start_point , end_point, (30, 30, 20), screen, yellow)
+                route = bfs(grid, start_point , end_point, (30, 30, 20), screen)
             elif main_text == "A*":
-                route = astar(grid, start_point , end_point, (30, 30, 20), screen, yellow)
+                route = astar(grid, start_point , end_point, (30, 30, 20), screen)
             elif main_text == "Dijktra":
-                route = dijktra(grid, start_point , end_point, (30, 30, 20), screen, yellow)
+                route = dijktra(grid, start_point , end_point, (30, 30, 20), screen)
             run_algorithm = False  # Đặt lại để tránh chạy liên tục
         if find_way and route:
             draw_route(screen, route, 20, green, find_way)
