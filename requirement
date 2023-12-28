@@ -1,0 +1,8 @@
+Thư viện sử dụng'
+pygame
+sys, 
+time 
+PIL 
+typing 
+heapq
+math 
