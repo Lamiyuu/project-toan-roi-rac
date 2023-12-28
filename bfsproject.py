@@ -1,11 +1,8 @@
 from typing import Optional
-
-import pygame
-import sys
 from collections import deque
-import time
 
-def bfs(grid, start, goal, grid_info, screen) -> Optional[list]:
+
+def bfs(grid, start, goal, grid_info, screen) -> Optional[tuple]:
     # Get grid information
     grid_width = grid_info[0]
     grid_height = grid_info[1]
@@ -18,6 +15,7 @@ def bfs(grid, start, goal, grid_info, screen) -> Optional[list]:
     visited = set()
     visited.add(start)
     parent = {}
+    considered_neighbors = []
     while queue:
         current = queue.popleft()
         current = current
@@ -28,7 +26,7 @@ def bfs(grid, start, goal, grid_info, screen) -> Optional[list]:
                 path.insert(0, current)
                 current = parent[current]
             path.insert(0, start)
-            return path
+            return path, considered_neighbors
         for i, j in neighbors:
             neighbor = current[0] + i, current[1] + j
             if 0 <= neighbor[0] < grid_width:       #Bỏ qua các vị trí nằm ngoài lưới đc đi
@@ -42,8 +40,9 @@ def bfs(grid, start, goal, grid_info, screen) -> Optional[list]:
                 # Tường x
                 continue
             if neighbor not in visited:
+                considered_neighbors.append(neighbor)
                 queue.append(neighbor)
                 visited.add(neighbor)
                 parent[neighbor] = current
 
-    return None    
+    return None, considered_neighbors    

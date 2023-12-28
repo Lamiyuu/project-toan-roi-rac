@@ -1,34 +1,32 @@
-import pygame
-import sys
-def get_obstacle(image_data):
-    # Assuming the image_data is a 2D list representing the color of each pixel
-    image_width = len(image_data)
-    image_height = len(image_data[0])
+from PIL import Image
+import numpy as np
+def get_obstacle(image_path):
+    image = Image.open(image_path)
+    image = image.resize((600,600))
+    
+    #Chia ra các ô grid
+    global grid_height, grid_width
+    grid_width = 20
+    grid_height = 20
 
-    # Create a Pygame surface from the image data
-    cell_size = 20  # Adjust the cell size as needed
-    image = pygame.Surface((image_width * cell_size, image_height * cell_size))
+    num_rows = image.size[0] // grid_height
+    num_cols = image.size[1] // grid_width
 
-    for x in range(image_width):
-        for y in range(image_height):
-            # Calculate the position in the new surface
-            rect = pygame.Rect(x * cell_size, y * cell_size, cell_size, cell_size)
+    obstacle_coordinates = []
+    # Xác định ngưỡng để phân biệt giữa màu đen và màu trung bình của ô grid
+    threshold_value = 220  # Giá trị ngưỡng (có thể điều chỉnh)
 
-            # Set the color of the cell based on the pixel color
-            pixel_color = image_data[x][y]
-            image.fill(pixel_color, rect)
+    for row in range(num_rows):
+        for col in range(num_cols):
+            top = row * grid_height
+            bottom = (row + 1) * grid_height
+            left = col * grid_width
+            right = (col + 1) * grid_width
+            grid_image = image.crop((left, top, right, bottom))
+            grid_array = np.array(grid_image)
+            average_color = np.mean(grid_array)
+            if average_color < threshold_value:
+                obstacle_coordinates.append((col, row))
+                
 
-    # List to store obstacle positions
-    obstacles = []
-
-    # Examine each cell in the image
-    for x in range(image_width):
-        for y in range(image_height):
-            cell_rect = pygame.Rect(x * cell_size, y * cell_size, cell_size, cell_size)
-            pixel_color = image.get_at(cell_rect.topleft)
-
-            # Check if the cell is black (obstacle)
-            if pixel_color == (0, 0, 0, 255):  # Assuming RGBA format, adjust if needed
-                obstacles.append((x, y))
-
-    return obstacles
+    return obstacle_coordinates

@@ -1,10 +1,8 @@
-import pygame
-import sys
+from typing import Optional
 import heapq
-import time
 from math import sqrt
 
-def dijktra(grid, start, goal, grid_info, screen) -> (list | None):
+def dijktra(grid, start, goal, grid_info, screen) ->  Optional[tuple]:
     # Get grid information
     grid_width = grid_info[0]
     grid_height = grid_info[1]
@@ -19,6 +17,7 @@ def dijktra(grid, start, goal, grid_info, screen) -> (list | None):
     oheap = []  # Danh sách mở chứa vị trí đang được xét
     heapq.heappush(oheap, (gscore[start], start))  # Đưa vị trí xuất phát vào danh sách mở
     current_temp = start
+    considered_neighbors = []
 
     while oheap:
         current = heapq.heappop(oheap)[1]  # Vị trí có F nhỏ nhất
@@ -31,7 +30,7 @@ def dijktra(grid, start, goal, grid_info, screen) -> (list | None):
                 current = came_from[current]
             data.append(start)
             data.reverse()
-            return data
+            return data, considered_neighbors
         close_set.add(current)  # Thêm current vào danh sách đóng
         for i, j in neighbors:  # Xét tất cả hàng xóm và tính G
             neighbor = current[0] + i, current[1] + j
@@ -49,8 +48,12 @@ def dijktra(grid, start, goal, grid_info, screen) -> (list | None):
             if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
                 continue  # Bỏ qua trong tập đóng và điểm G lớn hơn hoặc bằng
             if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
+
+                considered_neighbors.append(neighbor)
+
                 came_from[neighbor] = current
 
                 gscore[neighbor] = tentative_g_score
+
                 heapq.heappush(oheap, (gscore[neighbor], neighbor))   
-    return None
+    return None, considered_neighbors

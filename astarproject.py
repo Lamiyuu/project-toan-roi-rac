@@ -1,9 +1,5 @@
 from typing import Optional
-
-import pygame
-import sys
 import heapq
-import time
 from math import sqrt
 
 # ALGORITHM: A* (A star) -----
@@ -13,7 +9,7 @@ def heuristic(a, b) -> float:
 
 
 # Define A* path finding function
-def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
+def astar(grid, start, goal, grid_info, screen) -> Optional[tuple]:
     # Get grid information
     grid_width = grid_info[0]
     grid_height = grid_info[1]
@@ -30,11 +26,10 @@ def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
 
     oheap = []  # Danh sách mở chứa vị trí đang được xét
     heapq.heappush(oheap, (fscore[start], start))  # Đưa vị trí xuất phát vào danh sách mở
-    current_temp = start
+    considered_neighbors = []
 
     while oheap:
         current = heapq.heappop(oheap)[1]  # Vị trí có F nhỏ nhất
-        current_temp = current
         # Khi đạt được mục tiêu trả về đường đi ngắn nhất
         if current == goal:
             data = []
@@ -43,7 +38,7 @@ def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
                 current = came_from[current]
             data.append(start)
             data.reverse()
-            return data
+            return data, considered_neighbors
 
         close_set.add(current)  # Thêm current vào danh sách đóng
         for i, j in neighbors:  # Xét tất cả hàng xóm và tính G
@@ -62,6 +57,8 @@ def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
             if neighbor in close_set and tentative_g_score >= gscore.get(neighbor, 0):
                 continue  # Bỏ qua trong tập đóng và điểm G lớn hơn hoặc bằng
             if tentative_g_score < gscore.get(neighbor, 0) or neighbor not in [i[1] for i in oheap]:
+                considered_neighbors.append(neighbor)
+
                 came_from[neighbor] = current
 
                 gscore[neighbor] = tentative_g_score
@@ -69,4 +66,4 @@ def astar(grid, start, goal, grid_info, screen) -> Optional[list]:
                 fscore[neighbor] = tentative_g_score + heuristic(neighbor, goal)
 
                 heapq.heappush(oheap, (fscore[neighbor], neighbor))
-    return None
+    return None, considered_neighbors
